@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+  tavern-api:
+    build:
+      context: .
+      dockerfile: apps/tavern-api/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - MONGO_URL=mongodb://root:example@mongo:27017/
+
+volumes:
+  mongo-data:
