@@ -1,0 +1,61 @@
+{
+  "name": "tavern-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tavern-api/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/tavern-api",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/tavern-api/src/main.ts",
+        "tsConfig": "apps/tavern-api/tsconfig.app.json",
+        "assets": ["apps/tavern-api/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "tavern-api:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "tavern-api:build:development"
+        },
+        "production": {
+          "buildTarget": "tavern-api:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/tavern-api/Dockerfile . -t tavern-api"
+    }
+  }
+}
